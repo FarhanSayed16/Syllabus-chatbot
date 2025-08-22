@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllabus Chatbot</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #chat-container {
+            border: 1px solid #ccc;
+            padding: 15px;
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .user-msg {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+        }
+        .bot-msg {
+            background-color: #e9e9eb;
+            color: #333;
+            align-self: flex-start;
+            white-space: pre-wrap;
+        }
+        .sources-container {
+            font-size: 0.8em;
+            color: #555;
+            margin-top: 5px;
+            border-top: 1px solid #ddd;
+            padding-top: 5px;
+        }
+        #input-container { display: flex; }
+        #user-input { flex-grow: 1; padding: 12px; border-radius: 20px; border: 1px solid #ccc; font-size: 16px; }
+        #send-btn { padding: 10px 20px; margin-left: 10px; background-color: #007bff; color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 16px; }
+        #new-chat-btn { position: absolute; top: 10px; right: 20px; padding: 8px 12px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <button id="new-chat-btn">New Chat</button>
+    <h1>Syllabus Chatbot 🤖</h1>
+    <div id="chat-container"></div>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Ask a follow-up question...">
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const newChatBtn = document.getElementById('new-chat-btn');
+
+        let sessionId = crypto.randomUUID(); // Generate a unique session ID for the chat
+
+        function addMessage(sender, text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender === 'user' ? 'user-msg' : 'bot-msg');
+            messageElement.innerText = text;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return messageElement;
+        }
+
+        async function askBot() {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            addMessage('user', query);
+            userInput.value = '';
+            sendBtn.disabled = true;
+
+            const botMessageElement = addMessage('bot', '🤔');
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query, session_id: sessionId })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                botMessageElement.innerText = ''; // Clear the thinking emoji
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let sourcesReceived = false;
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    
+                    if (chunk.startsWith("SOURCES::")) {
+                        const sourcesJson = chunk.substring(9);
+                        const sources = JSON.parse(sourcesJson);
+                        displaySources(botMessageElement, sources);
+                        sourcesReceived = true;
+                    } else if (!sourcesReceived) {
+                        botMessageElement.innerText += chunk;
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }
+                }
+            } catch (error) {
+                botMessageElement.innerText = 'Sorry, something went wrong. Please check the server and try again.';
+                console.error('Error:', error);
+            } finally {
+                sendBtn.disabled = false;
+                userInput.focus();
+            }
+        }
+        
+        function displaySources(messageElement, sources) {
+            const sourcesDiv = document.createElement('div');
+            sourcesDiv.classList.add('sources-container');
+            sourcesDiv.innerHTML = '<strong>Sources:</strong>';
+            
+            const sourcesList = document.createElement('ul');
+            sources.forEach(source => {
+                const li = document.createElement('li');
+                // Extract filename from path for cleaner display
+                const filename = source.split(/[\\/]/).pop();
+                li.innerText = filename;
+                sourcesList.appendChild(li);
+            });
+            sourcesDiv.appendChild(sourcesList);
+            messageElement.appendChild(sourcesDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', askBot);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') askBot();
+        });
+        
+        newChatBtn.addEventListener('click', () => {
+            chatContainer.innerHTML = '';
+            sessionId = crypto.randomUUID();
+            alert('New chat session started.');
+        });
+    </script>
+</body>
+</html>
