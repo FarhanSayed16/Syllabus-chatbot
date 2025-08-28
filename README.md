@@ -5,7 +5,17 @@
 A powerful, locally-run chatbot designed to answer questions about your specific syllabus and course documents. This project uses a **Retrieval-Augmented Generation (RAG)** architecture to provide accurate, context-aware answers without needing an internet connection or paying for API fees.
 
 -----
-
+<p align="center">
+  <a href="https://github.com/farhansayed16/Syllabus-chatbot/stargazers"><img src="https://img.shields.io/github/stars/your-username/your-repo-name?style=social" /></a>
+  <a href="https://github.com/farhansayed16/Syllabus-chatbot/network/members"><img src="https://img.shields.io/github/forks/your-username/your-repo-name?style=social" /></a>
+  <br>
+  <img src="https://img.shields.io/badge/Backend-Python_&_FastAPI-green?logo=fastapi" />
+  <img src="https://img.shields.io/badge/AI-LangChain_&_Ollama-orange" />
+  <img src="https://img.shields.io/badge/Vector_DB-ChromaDB-blueviolet" />
+  <img src="https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-blue" />
+  <img src="https://img.shields.io/badge/License-MIT-green" />
+</p>
+-----
 ## ✨ Features
 
   * **Local & Private:** 100% free to run on your own machine. Your documents and conversations never leave your computer.
