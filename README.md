@@ -20,9 +20,12 @@ A powerful, locally-run chatbot designed to answer questions about your specific
 
 ## 📸 Screenshots
 
-| Light Theme | Light Theme with Sources |
+| Light Theme | 
 | :-------------------------------------------------------: | :----------------------------------------------------------------: |
-| ![Light theme](assets/light1.png)  | ![darktheme](assets/light2.png)  |
+| ![Light theme](assets/light1.png)  | 
+| Light Theme with Sources |
+| :-------------------------------------------------------: | :----------------------------------------------------------------: |
+| ![light](assets/light2.png)  |
 
 | Dark Theme | Dark Theme with Code Block |
 | :-------------------------------------------------------: | :-----------------------------------------------------------------: |
