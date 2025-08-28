@@ -1,0 +1,11 @@
+chromadb
+fastapi
+langchain
+langchain-community
+langchain-core
+langchain-ollama
+python-docx
+python-multipart
+sentence-transformers
+unstructured[pdf]
+uvicorn
