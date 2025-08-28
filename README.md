@@ -15,6 +15,7 @@ A powerful, locally-run chatbot designed to answer questions about your specific
   <img src="https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-blue" />
   <img src="https://img.shields.io/badge/License-MIT-green" />
 </p>
+
 -----
 ## ✨ Features
 
