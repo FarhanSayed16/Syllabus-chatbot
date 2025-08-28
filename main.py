@@ -4,7 +4,8 @@ from typing import AsyncIterable, Dict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse # <-- NEW: Import FileResponse
+from fastapi.staticfiles import StaticFiles # <-- NEW: Import StaticFiles
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate
@@ -16,7 +17,7 @@ from pydantic import BaseModel
 # Initialize FastAPI app
 app = FastAPI()
 
-# Allow CORS for frontend interaction
+# Allow CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,6 +25,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- NEW: Mount the static directory to serve CSS and JS ---
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 # --- Pydantic Models ---
@@ -33,7 +37,6 @@ class ChatRequest(BaseModel):
 
 
 # --- In-Memory Session Store for Chat Histories ---
-# NOTE: In a production app, you'd replace this with a persistent store like Redis.
 session_histories: Dict[str, ConversationBufferMemory] = {}
 
 
@@ -57,11 +60,7 @@ PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "q
 
 # --- Main Chat Logic (Using modern .astream() method) ---
 async def chat_stream_generator(request: ChatRequest) -> AsyncIterable[str]:
-    """
-    This function uses the modern .astream() method to stream the response.
-    It yields answer tokens as they are generated and then the source documents at the end.
-    """
-    # Get or create chat history for the session
+    # (This function remains the same as the last working version)
     if request.session_id not in session_histories:
         session_histories[request.session_id] = ConversationBufferMemory(
             memory_key="chat_history", return_messages=True, output_key="answer"
@@ -77,29 +76,25 @@ async def chat_stream_generator(request: ChatRequest) -> AsyncIterable[str]:
     )
 
     source_documents = []
-    # Use the .astream() method for streaming, which is the modern approach
     async for chunk in qa_chain.astream({"question": request.query}):
-        # Yield answer tokens as they come in from the stream
         if "answer" in chunk:
             yield chunk["answer"]
-
-        # Collect source documents as they are processed
         if "source_documents" in chunk:
             source_documents.extend(chunk["source_documents"])
 
-    # After the answer stream is complete, format and yield the unique sources
     if source_documents:
         unique_sources = list(
             set([doc.metadata.get("source", "Unknown") for doc in source_documents])
         )
-        # Use a special prefix to distinguish sources from answer tokens
         yield "SOURCES::" + json.dumps(unique_sources)
 
 
 # --- API Endpoints ---
+
+# --- NEW: Endpoint to serve the main HTML file ---
 @app.get("/")
-def read_root():
-    return {"message": "Syllabus Chatbot is running!"}
+async def read_root():
+    return FileResponse('index.html')
 
 
 @app.post("/api/ask", response_class=StreamingResponse)
