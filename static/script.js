@@ -141,3 +141,18 @@ const addMessage = (sender, text) => {
     // Add a welcome message
     addMessage('bot', 'Hello! How can I help you with your syllabus today?');
 });
+// Add this to the bottom of script.js
+const scrollToBottomBtn = document.getElementById('scroll-to-bottom');
+
+// Show or hide the button based on scroll position
+chatContainer.addEventListener('scroll', () => {
+    const isScrolledToBottom = chatContainer.scrollHeight - chatContainer.clientHeight <= chatContainer.scrollTop + 1;
+    if (isScrolledToBottom) {
+        scrollToBottomBtn.classList.remove('visible');
+    } else {
+        scrollToBottomBtn.classList.add('visible');
+    }
+});
+
+// Click event for the button
+scrollToBottomBtn.addEventListener('click', scrollToBottom);
