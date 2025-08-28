@@ -22,11 +22,11 @@ A powerful, locally-run chatbot designed to answer questions about your specific
 
 | Light Theme | Light Theme with Sources |
 | :-------------------------------------------------------: | :----------------------------------------------------------------: |
-| ![Light theme](assets/light1.jpg)  | ![darktheme](assets/light2.jpg)  |
+| ![Light theme](assets/light1.png)  | ![darktheme](assets/light2.png)  |
 
 | Dark Theme | Dark Theme with Code Block |
 | :-------------------------------------------------------: | :-----------------------------------------------------------------: |
-| ![darktheme](assets/dark1.jpg)  | ![darktheme](assets/dark2.jpg)  |
+| ![darktheme](assets/dark1.png)  | ![darktheme](assets/dark2.png)  |
 
 -----
 
