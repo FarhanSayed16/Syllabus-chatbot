@@ -19,19 +19,21 @@ A powerful, locally-run chatbot designed to answer questions about your specific
 -----
 
 ## 📸 Screenshots
+## Light Theme  
 
-| Light Theme | 
-| :-------------------------------------------------------: | :----------------------------------------------------------------: |
-| ![Light theme](assets/light1.png)  | 
-| Light Theme with Sources |
-| :-------------------------------------------------------: | :----------------------------------------------------------------: |
-| ![light](assets/light2.png)  |
+![Light theme](assets/light1.png)  
 
-| Dark Theme | Dark Theme with Code Block |
-| :-------------------------------------------------------: | :-----------------------------------------------------------------: |
-| ![darktheme](assets/dark1.png)  | ![darktheme](assets/dark2.png)  |
+## Light Theme with Sources 
 
------
+![light](assets/light2.png)  
+
+## Dark Theme 
+
+![darktheme](assets/dark1.png)     
+
+## Dark Theme with Code Block 
+
+![darktheme](assets/dark2.png)
 
 ## 🛠️ Tech Stack
 
